@@ -1,9 +1,10 @@
 # coding=utf-8
 
 from bs4 import BeautifulSoup
-from requests import get
+from requests_filecache import get
 import argparse
-import os
+
+ENDPOINT = 'https://unchartedwaters.fandom.com'
 
 
 def parse_args():
@@ -13,31 +14,52 @@ def parse_args():
     return parser.parse_args()
 
 
-def read_region(region):
-    """ Читает страницу из кэша или скачивает и кэширует """
-    os.makedirs('content/Region/', exist_ok=True)
-    filename = 'content/Region/' + region + '.html'
-    if not os.path.exists(filename):
-        url = 'https://unchartedwaters.fandom.com/wiki/Region/'
-        data = get(url + region).content.decode('utf-8')  # .encode('utf-8')
-        with open(filename, 'w', encoding='utf-8') as fd:
-            fd.write(data)
-    else:
-        with open(filename, 'r', encoding='utf-8') as fd:
-            data = fd.read()
-    return data
-
-
-def parse_region(region):
+def links_to_cities(region):
     """ Находит ссылки на города """
-    data = read_region(region)
+    url = ENDPOINT + '/wiki/Region/' + region
+    data = get(url)
     soup = BeautifulSoup(data, 'html.parser')
+    links = set()
     for _map in soup.findAll('map'):
         for area in _map:
             if area.attrs['shape'] == 'circle':
-                print(area.attrs['href'])
+                links.add(area.attrs['href'])
+    return links
+
+
+def fetch_markets(region):
+    """ Скачивает данные по рынкам """
+    for link in links_to_cities(region):
+        get(ENDPOINT + link + '/Market')
+
+
+def parse_market(url):
+    """ Сбор данных о конкретном рынке """
+    data = get(url)
+    soup = BeautifulSoup(data, 'html.parser')
+    market_table = soup.find('table', {'style': "width: 100%;;"})
+    if not market_table:
+        market_table = soup.find('table', {'style': "width: 100%;"})
+    links = set()
+    if market_table:
+        for link in market_table.find_all('a'):
+            href = link.attrs.get('href', '')
+            if not href.startswith('/wiki/'):
+                continue
+            if ':' in href:
+                continue
+            if 'Investing' in href:
+                continue
+            links.add(href)
+    return links
+
+
+def main():
+    args = parse_args()
+    for city in links_to_cities(args.region):
+        for good in parse_market(ENDPOINT + city + '/Market'):
+            get(ENDPOINT + good)
 
 
 if __name__ == '__main__':
-    args = parse_args()
-    parse_region(args.region)
+    main()
