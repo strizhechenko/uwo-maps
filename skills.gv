@@ -1,0 +1,16 @@
+digraph G {
+    Firearms -> Aden [style=dotted label="weapons 3"];
+    Spice -> Gujarat [style=dotted label="perfume 3"];
+    Perfume -> Calicut;
+    Survival -> Tunis;
+    Metal -> Venice;
+    Fabric -> London;
+    Seasoning -> Marseille;
+    Seasoning -> Cairo;
+    Casting -> Venice;
+    Luxuries -> Venice;
+    Management -> Veracruz [style=dotted label="storage 3"];
+    Medicine -> London [style=dotted label="sundries 3"];
+    Sewing -> Genoa;
+    Sewing -> Tunis;
+}
