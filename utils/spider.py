@@ -146,13 +146,19 @@ def main():
             for good in parse_market(ENDPOINT + city + '/Market'):
                 get(ENDPOINT + good)
     output = set()
+    found = False
     if args.parse_books:
         for book in links_to_cookbooks():
             for level, name, ingridients in parse_cookbook(book):
                 if args.recipe and args.recipe != name:
                     continue
+                found = True
                 for item in node(args, level, name, ingridients):
                     output.add(item)
+                if args.recipe:
+                    break
+            if args.recipe and found:
+                break
     for item in output:
         print(item)
     if args.make_graph:
