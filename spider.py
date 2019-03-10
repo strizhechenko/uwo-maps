@@ -12,13 +12,15 @@ def parse_args():
     """ Разбор аргументов """
     parser = argparse.ArgumentParser()
     parser.add_argument('--region', required=True)
-    parser.add_argument('--no-download', action='store_false', dest='download', default=True)
+    parser.add_argument('--download', action='store_true', dest='download', default=False)
     parser.add_argument('--no-parse-books', action='store_false', dest='parse_books', default=True)
-    parser.add_argument('--make-graph', action='store_true', default=False)
+    parser.add_argument('--no-make-graph', action='store_false', dest='make_graph', default=True)
     parser.add_argument('--make-db', action='store_true', default=False)
-    parser.add_argument('--min-level', type=int, default=1)
-    parser.add_argument('--max-level', type=int, default=18)
+    parser.add_argument('--min-level', type=int)
+    parser.add_argument('--max-level', type=int)
+    parser.add_argument('--level', type=int)
     parser.add_argument('--recipe', type=str)
+    parser.add_argument('--recipes', action='store_true', default=False)
     return parser.parse_args()
 
 
@@ -108,13 +110,12 @@ def where_to_buy(good_link):
     return []
 
 
-def node(args, level, name, ingridients):
-    """ Рисует данные по рецепту """
-    if not args.make_graph or level < args.min_level or level > args.max_level:
-        return
-    yield ' "{0}" [fontcolor=blue];'.format(name)
+def node_graph(ingridients, name):
+    """ Рисует данные рецепта """
+    yield ' "{0}" [fontcolor=blue fontsize=24];'.format(name)
     for ingridient_link in ingridients:
         ingridient = ingridient_link.split('/')[-1]
+        yield ' "{0}" [fontsize=20];'.format(ingridient)
         yield ' "{0}" -> "{1}" [style=dotted];'.format(name, ingridient)
         if ingridient_link == '/wiki/Flour':
             continue
@@ -122,6 +123,17 @@ def node(args, level, name, ingridients):
             city = city_link.split('/')[-1]
             yield ' "{0}" [fontcolor=red];'.format(city)
             yield ' "{0}" -> "{1}";'.format(ingridient, city)
+
+
+def node(args, level, name, ingridients):
+    """ Обходит рецепт """
+    if not args.min_level or args.min_level <= level:
+        if not args.max_level or args.max_level >= level:
+            if not args.level or args.level == level:
+                if args.recipes:
+                    yield name
+                elif args.make_graph:
+                    yield from node_graph(ingridients, name)
 
 
 def main():
