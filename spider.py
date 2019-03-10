@@ -16,6 +16,8 @@ def parse_args():
     parser.add_argument('--no-parse-books', action='store_false', dest='parse_books', default=True)
     parser.add_argument('--make-graph', action='store_true', default=False)
     parser.add_argument('--make-db', action='store_true', default=False)
+    parser.add_argument('--min-level', type=int, default=1)
+    parser.add_argument('--max-level', type=int, default=18)
     return parser.parse_args()
 
 
@@ -91,6 +93,33 @@ def parse_recipe(recipe):
     return level, name, ingridients
 
 
+def where_to_buy(good_link):
+    """ Где покупать товар, возвращает список городов """
+    data = get(good_link)
+    soup = BeautifulSoup(data, 'html.parser')
+    table = soup.find('table', {'class': 'UWtable LiteBrown'})
+    if table:
+        header, markets = [content for content in table.contents if isinstance(content, Tag)]
+        if markets:
+            buy, sell = [content for content in markets.contents if isinstance(content, Tag)]
+            if buy:
+                return [a.attrs['href'] for a in buy.find_all('a') if a.attrs.get('class') is None]
+    return []
+
+
+def node(args, level, name, ingridients):
+    """ Рисует данные по рецепту """
+    if not args.make_graph or level < args.min_level or level > args.max_level:
+        return
+    for ingridient_link in ingridients:
+        ingridient = ingridient_link.split('/')[-1]
+        print(' "{0}" -> "{1}";'.format(name, ingridient))
+        if ingridient_link == '/wiki/Flour':
+            continue
+        for city in where_to_buy(ENDPOINT + ingridient_link):
+            print('     "{0}" -> "{1}";'.format(ingridient, city.split('/')[-1]))
+
+
 def main():
     args = parse_args()
     if args.make_graph:
@@ -99,15 +128,10 @@ def main():
         for city in links_to_cities(args.region):
             for good in parse_market(ENDPOINT + city + '/Market'):
                 get(ENDPOINT + good)
-                if args.make_graph:
-                    print(' "{0}" -> "{1}";'.format(good.split('/')[-1], city.split('/')[-1]))
     if args.parse_books:
         for book in links_to_cookbooks():
             for level, name, ingridients in parse_cookbook(book):
-                if args.make_graph:
-                    print(' "{0}" -> "{1}";'.format(level, name))
-                    for ingridient in ingridients:
-                        print('     "{0}" -> "{1}";'.format(name, ingridient.split('/')[-1]))
+                node(args, level, name, ingridients)
     if args.make_graph:
         print('}')
 
