@@ -14,6 +14,8 @@ def parse_args():
     parser.add_argument('--region', required=True)
     parser.add_argument('--no-download', action='store_false', dest='download', default=True)
     parser.add_argument('--no-parse-books', action='store_false', dest='parse_books', default=True)
+    parser.add_argument('--make-graph', action='store_true', default=False)
+    parser.add_argument('--make-db', action='store_true', default=False)
     return parser.parse_args()
 
 
@@ -91,14 +93,23 @@ def parse_recipe(recipe):
 
 def main():
     args = parse_args()
+    if args.make_graph:
+        print("digraph G {")
     if args.download:
         for city in links_to_cities(args.region):
             for good in parse_market(ENDPOINT + city + '/Market'):
                 get(ENDPOINT + good)
+                if args.make_graph:
+                    print(' "{0}" -> "{1}";'.format(good.split('/')[-1], city.split('/')[-1]))
     if args.parse_books:
         for book in links_to_cookbooks():
             for level, name, ingridients in parse_cookbook(book):
-                print(level, name, ingridients)
+                if args.make_graph:
+                    print(' "{0}" -> "{1}";'.format(level, name))
+                    for ingridient in ingridients:
+                        print('     "{0}" -> "{1}";'.format(name, ingridient.split('/')[-1]))
+    if args.make_graph:
+        print('}')
 
 
 if __name__ == '__main__':

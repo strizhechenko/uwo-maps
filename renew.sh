@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
-gv2map skills.gv skills.png
-open skills.png
+python3 spider.py --make-graph --region $1 > $1.gv
+gv2map $1.gv $1.png
+open $1.png
