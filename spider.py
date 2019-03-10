@@ -18,6 +18,7 @@ def parse_args():
     parser.add_argument('--make-db', action='store_true', default=False)
     parser.add_argument('--min-level', type=int, default=1)
     parser.add_argument('--max-level', type=int, default=18)
+    parser.add_argument('--recipe', type=str)
     return parser.parse_args()
 
 
@@ -111,13 +112,16 @@ def node(args, level, name, ingridients):
     """ Рисует данные по рецепту """
     if not args.make_graph or level < args.min_level or level > args.max_level:
         return
+    yield ' "{0}" [fontcolor=blue];'.format(name)
     for ingridient_link in ingridients:
         ingridient = ingridient_link.split('/')[-1]
-        print(' "{0}" -> "{1}";'.format(name, ingridient))
+        yield ' "{0}" -> "{1}" [style=dotted];'.format(name, ingridient)
         if ingridient_link == '/wiki/Flour':
             continue
-        for city in where_to_buy(ENDPOINT + ingridient_link):
-            print('     "{0}" -> "{1}";'.format(ingridient, city.split('/')[-1]))
+        for city_link in where_to_buy(ENDPOINT + ingridient_link):
+            city = city_link.split('/')[-1]
+            yield ' "{0}" [fontcolor=red];'.format(city)
+            yield ' "{0}" -> "{1}";'.format(ingridient, city)
 
 
 def main():
@@ -128,10 +132,16 @@ def main():
         for city in links_to_cities(args.region):
             for good in parse_market(ENDPOINT + city + '/Market'):
                 get(ENDPOINT + good)
+    output = set()
     if args.parse_books:
         for book in links_to_cookbooks():
             for level, name, ingridients in parse_cookbook(book):
-                node(args, level, name, ingridients)
+                if args.recipe and args.recipe != name:
+                    continue
+                for item in node(args, level, name, ingridients):
+                    output.add(item)
+    for item in output:
+        print(item)
     if args.make_graph:
         print('}')
 
