@@ -1,10 +1,31 @@
 #!/usr/bin/env python
 
 import argparse
-import requests
+from requests import get, head
 import bs4
 from routes import to_india
 from jinja2 import Template
+
+TEMPLATE = Template("""
+===== {{ first }} -> {{ second }} =====
+
+<hidden Все товары>
+from: {{ first_url }}
+
+{% for good in goods.first %}  * {{ good }}
+{% endfor %}
+
+to: {{ second_url }}
+
+{% for good in goods.second %}  * {{ good }}
+{% endfor %}
+</hidden>
+
+Общее (не покупать):
+
+{% for good in goods.common %}  * {{ good }}
+{% endfor %}
+""")
 
 
 def parse_args():
@@ -15,14 +36,27 @@ def parse_args():
 
 
 def city_url(city: str) -> str:
-    return 'https://unchartedwaters.fandom.com/wiki/{0}/Market'.format(city)
+    city = city.replace(" ", "_")
+    url = 'https://unchartedwaters.fandom.com/wiki/{0}/Market'.format(city)
+    if head(url).status_code == 404:
+        url = 'https://unchartedwaters.fandom.com/wiki/{0}'.format(city)
+    return url
 
 
 def market_table_separate(data: str):
     soup = bs4.BeautifulSoup(data, "html.parser")
-    market_table = soup.find('table', {'style': "width: 100%;;"})
+    market_table = None
+    market_keeper = soup.find('span', id="Market_Keeper")
+    if market_keeper:
+        market_table = market_keeper.find_next('table')
+    if not market_table:
+        market_table = soup.find('table', {'style': "width: 100%;;"})
     if not market_table:
         market_table = soup.find('table', {'style': "width: 100%;"})
+    # Some cities has list of language table first
+    if market_table:
+        if any('Language' in item.text for item in market_table.contents if isinstance(item, bs4.Tag)):
+            market_table = market_table.find_next('table', {'style': "width: 100%;"})
     return market_table
 
 
@@ -42,36 +76,34 @@ def parse_market_table(market_table) -> set:
 
 
 def fetch_market_goods(city: str) -> set:
-    city = city.replace(" ", "_")
     url = city_url(city)
-    request = requests.get(url)
-    if request.status_code == 404:
-        url = 'https://unchartedwaters.fandom.com/wiki/{0}'.format(city)
-        request = requests.get(url)
+    request = get(url)
     market_table = market_table_separate(request.content)
     if not market_table:
-        return set()
+        return {"Have no idea what they sale"}
     return parse_market_table(market_table)
 
 
-def diff(first, second):
+def common(first, second) -> dict:
     first = fetch_market_goods(first)
     second = fetch_market_goods(second)
-    for good in first - second:
-        yield good
+    return {
+        "first": first,
+        "second": second,
+        "common": first & second
+    }
 
 
 def main():
     prev = None
-    template = Template(open("goods.jinja2").read())
     for city in to_india:
         if prev:
-            print(template.render({
+            print(TEMPLATE.render({
                 "first": prev,
                 "second": city,
                 "first_url": city_url(prev),
                 "second_url": city_url(city),
-                "goods": diff(prev, city)
+                "goods": common(prev, city),
             }))
         prev = city
 
