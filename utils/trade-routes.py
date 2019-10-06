@@ -1,9 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+# coding: utf-8
 
 import argparse
 from requests import get, head
 import bs4
-from routes import to_india
+from routes import routes
 from jinja2 import Template
 
 TEMPLATE = Template("""
@@ -21,17 +22,20 @@ to: {{ second_url }}
 {% endfor %}
 </hidden>
 
+{% if goods.common %}
 Общее (не покупать):
 
 {% for good in goods.common %}  * {{ good }}
 {% endfor %}
+{% endif %}
 """)
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('first')
-    parser.add_argument('second')
+    parser.add_argument('--first')
+    parser.add_argument('--second')
+    parser.add_argument('--route', default='to_india')
     return parser.parse_args()
 
 
@@ -95,8 +99,13 @@ def common(first, second) -> dict:
 
 
 def main():
+    args = parse_args()
     prev = None
-    for city in to_india:
+    my_route = routes[args.route]
+    if args.first and args.second:
+        my_route = [args.second]
+        prev = args.first
+    for city in my_route:
         if prev:
             print(TEMPLATE.render({
                 "first": prev,
