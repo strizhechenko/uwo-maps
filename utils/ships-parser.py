@@ -5,31 +5,9 @@ from requests import get
 import bs4
 from jinja2 import Template
 
-TEMPLATE = Template("""
-===== {{ first }} -> {{ second }} =====
-
-<hidden Все товары>
-from: {{ first_url }}
-
-{% for good in goods.first %}  * {{ good }}
-{% endfor %}
-
-to: {{ second_url }}
-
-{% for good in goods.second %}  * {{ good }}
-{% endfor %}
-</hidden>
-
-{% if goods.common %}
-Общее (не покупать):
-
-{% for good in goods.common %}  * {{ good }}
-{% endfor %}
-{% endif %}
-""")
 wiki = 'https://unchartedwaters.fandom.com'
-my_adv = 28
-my_trade = 49
+my_adv = 29
+my_trade = 58
 my_battle = 16
 
 
