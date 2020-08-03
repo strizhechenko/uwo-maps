@@ -1,0 +1,23 @@
+<script>
+    $(document).ready(function () {
+        $('#datatable').DataTable({
+            "aaSorting": [],
+            "language": {
+                "lengthMenu": "Показать _MENU_ записей на странице",
+                "zeroRecords": "Ничего не найдено",
+                "info": "Страница _PAGE_ из _PAGES_",
+                "infoEmpty": "Нет доступных записей",
+                "sSearch": "Поиск: ",
+                "next": "Next page",
+                "last": "Last page",
+                "infoFiltered": "(поиск среди _MAX_ записей)",
+                "paginate": {
+                    "previous": "Предыдущая",
+                    "next": "Следующая"
+                }
+            }
+        });
+    });
+</script>
+<script src="{{ url_for('static', filename='js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}"></script>
