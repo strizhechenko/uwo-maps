@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+    <table id="datatable" class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>Trade Goods</th>
+            <th>Where to buy</th>
+            <th>Where to sell</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for name, trade_good in data.items() %}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ trade_good['origin'] }}</td>
+                <td>
+                    {% for country, price in trade_good['sell'].items() %}
+                        {{ country }}: {{ price }}
+                        <br>
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

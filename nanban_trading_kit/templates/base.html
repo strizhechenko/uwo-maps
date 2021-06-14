@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nanban Trading Kit</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
+    {#    <link rel="stylesheet" type="text/css" href='/static/css/fixedHeader.bootstrap.css'>#}
+    {#    <link rel="stylesheet" type="text/css" href='/static/css/buttons.bootstrap.css'>#}
+    <link rel="stylesheet" type="text/css" href='/static/css/dataTables.bootstrap.css'>
+    {#    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">#}
+</head>
+<body>
+<div class="container">
+    {% block top_navigation %}
+        <nav class="navbar navbar-expand-md navbar-expand-lg navbar-expand-sm navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Nanban Trading Kit</a>
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#nav_content">
+                <i class="navbar-toggler-icon"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="nav_content">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                    <li class="nav-item"><a class="nav-link" href="/">Nanban Goods</a></li>
+                    <li class="nav-item"><a class="nav-link text-secondary" href="/dashboard">Dashboard</a></li>
+                </ul>
+            </div>
+        </nav>
+    {% endblock %}
+    {% block content %} {% endblock %}
+</div>
+</body>
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+
+{% include "datatable.html" %}
+</html>

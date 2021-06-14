@@ -1,0 +1,48 @@
+<h2>Totals</h2>
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header" align="center">
+                <b>Bazaar totals</b>
+            </div>
+            <table class="card-body table table-striped table-sm">
+                {% for name, value in load['per_toon'].items() %}
+                    <tr>
+                        <th>{{ name }}</th>
+                        <td>{{ value }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header" align="center">
+                <b>Goods</b>
+            </div>
+            <table class="card-body table table-striped table-sm">
+                {% for good, amount in load['per_goods'].items() %}
+                    <tr>
+                        <th>{{ good }}</th>
+                        <td>{{ amount }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header" align="center">
+                <b>Calculations</b>
+            </div>
+            <table class="card-body table table-striped table-sm">
+                {% for key, value in load['calc'].items() %}
+                    <tr>
+                        <th>{{ key }}</th>
+                        <td>{{ value }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>

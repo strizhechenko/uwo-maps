@@ -1,0 +1,38 @@
+<h2>Liners</h2>
+<div class="row">
+    {% for liner in liners %}
+        <div class="col-sm-6 col-md-6 cold-lg-4">
+            <div class="card">
+                <div class="card-header" align="center">
+                    <b>{{ liner.src }} - {{ liner.dst }}</b>
+                </div>
+                <table class="table card-body table-sm table-striped">
+                    <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Place</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for time in liner %}
+                        <tr>
+                            {% if loop.first %}
+                                <th>
+                                    {% else %}
+                                <td>
+                            {% endif %}
+                            {{ time.strftime("%H:%M") }}
+                            {% if loop.first %}
+                                </th>
+                            {% else %}
+                                </td>
+                            {% endif %}
+                            <td>{{ liner.where(time) }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,60 @@
+<div class="row">
+    <form method="post" action="/dashboard">
+        <div class="col-lg-6">
+            <table id="bazaar_table" class="col-lg-6 table table-bordered table-striped table-sm">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Omich</th>
+                    <th>weirded</th>
+                    <th>Acid-Queen</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for good, amount in load['per_goods'].items() %}
+                    <tr>
+                    <th>{{ good }}</th>
+                    {% for toon in 'Omich', 'weirded', 'Acid-Queen' %}
+                        <td>
+                            <input style="text-align: right;"
+                                   type="number"
+                                   class="toon_good_amount"
+                                   name="{{ toon }}_{{ good }}"
+                                   value="{{ amount }}">
+                        </td>
+                    {% endfor %}
+                {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-6">
+            <table id="fleet_table" class="col-lg-6 table table-bordered table-striped table-sm">
+                <thead>
+                <tr>
+                    <th colspan="2">Omich</th>
+                    <th>weirded</th>
+                    <th>Acid-Queen</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for good, amount in load['per_goods'].items() %}
+                    <tr>
+                    <th>{{ good }}</th>
+                    {% for toon in 'Omich', 'weirded', 'Acid-Queen' %}
+                        <td>
+                            <input style="text-align: right;"
+                                   type="number"
+                                   class="toon_good_amount"
+                                   name="{{ toon }}_{{ good }}"
+                                   value="{{ amount }}">
+                        </td>
+                    {% endfor %}
+                {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <button type="submit" class="btn btn-primary">Пересчитать</button>
+    </form>
+</div>

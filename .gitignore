@@ -1,5 +1,6 @@
-# Created by .ignore support plugin (hsz.mobi)
 *.png
 *.svg
 cache
 *.gv
+*.yml
+__pycache__
