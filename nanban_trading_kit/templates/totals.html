@@ -6,12 +6,18 @@
                 <b>Bazaar totals</b>
             </div>
             <table class="card-body table table-striped table-sm">
+                {% set free_slots = {} %}
                 {% for name, value in load['per_toon'].items() %}
                     <tr>
                         <th>{{ name }}</th>
                         <td>{{ value }}</td>
+                        {% if free_slots.update({name: 10000 - value}) %}{% endif %}
                     </tr>
                 {% endfor %}
+                <tr>
+                    <th>Free slots</th>
+                    <td>{{ free_slots.values() | sum }}</td>
+                </tr>
             </table>
         </div>
     </div>

@@ -25,7 +25,7 @@ class Liner:
             yield now
             if now.minute + self.way < 60:
                 yield now.replace(minute=self.way)
-            now = now.replace(hour=now.hour + 1, minute=0)
+            now = now.replace(hour=(0 if now.hour == 23 else now.hour + 1), minute=0)
 
 
 def _print(place, date):
@@ -43,5 +43,5 @@ def liners():
                 _print(liner.where(now), now)
             except ValueError:
                 pass
-            now = now.replace(hour=(now.hour + 1) % 24, minute=0)
+            now = now.replace(hour=(0 if now.hour == 23 else now.hour + 1) % 24, minute=0)
             _print(liner.where(now), now)
