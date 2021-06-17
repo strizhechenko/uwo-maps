@@ -61,11 +61,16 @@ def total_load(cargo, bazaar, fleet, eu_items, count_fleet=True, count_bazaar=Tr
 
 
 def bazaar_per_goods(b, c, f):
+    d = Counter()
     for toon in b.values():
         c.update(toon)
     for toon in f.values():
         c.update(toon)
-    return c
+    for key in 'Wine', 'Raisins':
+        d[key] = c[key]
+    for key, v in sorted(c.items(), key=itemgetter(1)):
+        d[key] = c[key]
+    return d
 
 
 def bazaar_per_toon(bazaar, count_bazaar, per_toon):

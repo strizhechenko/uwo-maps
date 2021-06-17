@@ -1,0 +1,21 @@
+<h2>Liners</h2>
+<div class="row">
+    {% for hint, description in hints.items() %}
+        <div class="col-sm-6 col-md-3 cold-lg-3">
+            <div class="card">
+                <div class="card-header" align="center">
+                    <b>{{ hint }}</b>
+                </div>
+                {% if description is string %}
+                    {{ description }}
+                {% else %}
+                    <ol>
+                        {% for line in description %}
+                            <li>{{ line }}</li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

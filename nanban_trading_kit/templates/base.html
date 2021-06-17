@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <title>Nanban Trading Kit</title>
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
-    {#    <link rel="stylesheet" type="text/css" href='/static/css/fixedHeader.bootstrap.css'>#}
-    {#    <link rel="stylesheet" type="text/css" href='/static/css/buttons.bootstrap.css'>#}
     <link rel="stylesheet" type="text/css" href='/static/css/dataTables.bootstrap.css'>
-    {#    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">#}
 </head>
 <body>
+<style>
+    div.container {
+        max-width: 90% !important;
+    }
+</style>
 <div class="container">
     {% block top_navigation %}
         <nav class="navbar navbar-expand-md navbar-expand-lg navbar-expand-sm navbar-dark bg-dark">

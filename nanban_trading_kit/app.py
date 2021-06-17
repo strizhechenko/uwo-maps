@@ -60,7 +60,7 @@ def dashboard():
     now = datetime.datetime.now()
     load = total_load(cargo, bazaar, fleet, eu_items, count_fleet=True, count_bazaar=True, per_toon=True)
     print(load)
-    return render_template('dashboard.html', liners=liners, now=now, load=load, bazaar=bazaar, fleet=fleet)
+    return render_template('dashboard.html', liners=liners, hints=hints, now=now, load=load, bazaar=bazaar, fleet=fleet)
 
 
 @app.route('/')
