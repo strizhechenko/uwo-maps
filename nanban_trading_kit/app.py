@@ -36,7 +36,16 @@ def dashboard():
         bazaar, fleet = {}, {}
         print(request.form)
         action = 'recalculate'
+        count_bazaar = False
+        count_fleet = False
         for k, v in request.form.items():
+            if k.startswith('count_'):
+                if k.endswith('bazaar'):
+                    print(k, v)
+                    count_bazaar = v == 'on'
+                elif k.endswith('fleet'):
+                    count_fleet = v == 'on'
+                continue
             if v == '':
                 action = k
                 continue
@@ -44,23 +53,28 @@ def dashboard():
             _add(bazaar if cat == 'bazaar' else fleet, toon, good, v)
         if action == 'rewrite':
             write_all(bazaar, fleet)
-        _, _, cargo, sellers, hints, eu_items = read_all()
+        _, _, cargo, hints, goods = read_all()
     else:
-        bazaar, fleet, cargo, sellers, hints, eu_items = read_all()
-    print('bazaar', bazaar)
-    print('fleet', fleet)
+        count_bazaar = count_fleet = True
+        bazaar, fleet, cargo, hints, goods = read_all()
     _data = {
         'bazaar': bazaar,
         'fleet': fleet,
-        'sellers': sellers,
         'hints': hints,
-        'eu_items': eu_items
+        'goods': goods
     }
     liners = (Liner(35, 'London', 'Nagasaki'), Liner(25, 'London', 'Colony'))
     now = datetime.datetime.now()
-    load = total_load(cargo, bazaar, fleet, eu_items, count_fleet=True, count_bazaar=True, per_toon=True)
-    print(load)
-    return render_template('dashboard.html', liners=liners, hints=hints, now=now, load=load, bazaar=bazaar, fleet=fleet)
+    load = total_load(cargo, bazaar, fleet, goods, count_fleet=count_fleet, count_bazaar=count_bazaar, per_toon=True)
+    return render_template(
+        'dashboard.html',
+        liners=liners,
+        hints=hints,
+        now=now,
+        load=load,
+        bazaar=bazaar, count_bazaar=count_bazaar,
+        fleet=fleet, count_fleet=count_fleet
+    )
 
 
 @app.route('/')

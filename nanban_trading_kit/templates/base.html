@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Nanban Trading Kit</title>
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href='/static/css/dataTables.bootstrap.css'>
+    {% block css %}{% endblock %}
 </head>
 <body>
 <style>
@@ -33,6 +33,5 @@
 </body>
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
-
-{% include "datatable.html" %}
+{% block js %}{% endblock %}
 </html>

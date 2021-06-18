@@ -42,7 +42,13 @@
             </tbody>
         </table>
     </div>
-    <div align="right" class="col-lg-2 col-md-3">
+    <div align="right" class="col-lg-2 col-md-3 form-group">
+        <label for="count_bazaar">Bazaar</label>
+        <input class="form-control" type="checkbox" name="count_bazaar" id="count_bazaar"
+               {% if count_bazaar %}checked{% endif %}>
+        <label for="count_fleet">Fleet</label>
+        <input class="form-control" type="checkbox" name="count_fleet" id="count_fleet"
+               {% if count_fleet %}checked{% endif %}>
         <button type="submit" class="btn btn-primary" name="recalculate">Пересчитать</button>
         <button type="submit" class="btn btn-secondary" name="rewrite">Записать</button>
     </div>

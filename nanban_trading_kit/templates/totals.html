@@ -10,7 +10,7 @@
                 {% for name, value in load['per_toon'].items() %}
                     <tr>
                         <th>{{ name }}</th>
-                        <td>{{ value }}</td>
+                        <td>{{ value }} ({{ value / 100 }}%)</td>
                         {% if free_slots.update({name: 10000 - value}) %}{% endif %}
                     </tr>
                 {% endfor %}

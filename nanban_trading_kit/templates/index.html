@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href='/static/css/dataTables.bootstrap.css'>
+{% endblock %}
 {% block content %}
     <table id="datatable" class="table table-striped">
         <thead class="thead-dark">
@@ -23,4 +26,7 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+{% block js %}
+    {% include "datatable.html" %}
 {% endblock %}

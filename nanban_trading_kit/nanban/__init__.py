@@ -14,16 +14,14 @@ def read_all():
         fleet = yaml.load(fd, yaml.SafeLoader)
     with open('cargo.yml') as fd:
         cargo = yaml.load(fd, yaml.SafeLoader)
-    with open('sellers.yml') as fd:
-        sellers = yaml.load(fd, yaml.SafeLoader)
     with open('hints.yml') as fd:
         hints = yaml.load(fd, yaml.SafeLoader)
     with open('goods.yml') as fd:
-        eu_items = yaml.load(fd, yaml.SafeLoader)['eu']
-    return bazaar, fleet, cargo, sellers, hints, eu_items
+        goods = yaml.load(fd, yaml.SafeLoader)
+    return bazaar, fleet, cargo, hints, goods
 
 
-def total_load(cargo, bazaar, fleet, eu_items, count_fleet=True, count_bazaar=True, per_toon=False):
+def total_load(cargo, bazaar, fleet, goods, count_fleet=True, count_bazaar=True, per_toon=False):
     """ TODO: заменить на возврат дикта"""
     results = {}
     if count_fleet and not count_bazaar:
@@ -36,12 +34,12 @@ def total_load(cargo, bazaar, fleet, eu_items, count_fleet=True, count_bazaar=Tr
     b = bazaar if count_bazaar else {}
     f = fleet if count_fleet else {}
     results['per_toon'] = bazaar_per_toon(bazaar, count_bazaar, per_toon)
-    results['per_goods'] = bazaar_per_goods(b, c, f)
+    results['per_goods'] = bazaar_per_goods(b, c, f, goods)
     results['calc'] = {}
     fleet_cargo = sum(cargo.values()) - 200 - 24 * 2
     results['calc']["Fleet cargo (const)"] = fleet_cargo
     # col('Total', sum(c.values()))
-    ea = sum(v for k, v in c.items() if k not in eu_items)
+    ea = sum(v for k, v in c.items() if k not in goods)
     results['calc']['EA (has)'] = ea
     wine = int(c['Wine'] + c['Raisins'] * success_rate)
     results['calc']['EA (with nanban)'] = wine + ea
@@ -60,16 +58,20 @@ def total_load(cargo, bazaar, fleet, eu_items, count_fleet=True, count_bazaar=Tr
     return results
 
 
-def bazaar_per_goods(b, c, f):
+def bazaar_per_goods(b, c, f, goods):
     d = Counter()
+    # Собираем базар и флот в кучу
     for toon in b.values():
         c.update(toon)
     for toon in f.values():
         c.update(toon)
+    # Сортируем очень стрёмным способ, но тут нам и не бигдата
     for key in 'Wine', 'Raisins':
         d[key] = c[key]
-    for key, v in sorted(c.items(), key=itemgetter(1)):
-        d[key] = c[key]
+    for category in 'iberia', 'britain':
+        for key, v in sorted(c.items(), key=itemgetter(1)):
+            if key in goods[category]:
+                d[key] = c[key]
     return d
 
 
