@@ -1,0 +1,36 @@
+<div class="col-sm-12 col-md-4 col-lg-3">
+    <div class="card">
+        <div class="card-header" align="center">
+            <b>Calculate how much wine to give</b>
+        </div>
+        <form class="card-body">
+            <div class="form-group">
+                <input type="text" id="total_cargo" value="3000" class="group-item">
+                <label for="total_cargo">Total cargo</label>
+            </div>
+            <div class="form-group">
+                <input type="text" id="you_give" value="2450" class="group-item">
+                <label for="you_give" class="col-form-label">You give</label>
+            </div>
+            <div class="form-group">
+                <input type="text" id="you_get" value="1001" class="group-item">
+                <label for="you_get" class="col-form-label">You get</label>
+            </div>
+            <div class="btn btn-primary" onclick="recalculate('total_cargo', 'you_give', 'you_get', 'you_need')">
+                Calculate
+            </div>
+            <div class="form-group">
+                <label for="you_need" class="col-form-label">You need:</label>
+                <p id="you_need" class="group-item"></p>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="application/javascript">
+    function recalculate(cargo, give, get, need) {
+        const _cargo = parseInt(document.getElementById(cargo).value);
+        const _give = parseInt(document.getElementById(give).value);
+        const _get = parseInt(document.getElementById(get).value);
+        document.getElementById(need).textContent = (_cargo / (_get * 3 / _give)).toFixed(0);
+    }
+</script>
